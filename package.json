@@ -1,0 +1,20 @@
+{
+  "name": "pg-co",
+  "version": "1.0.0",
+  "description": "A ES6 generator (async/await) [co](https://github.com/tj/co) compliant wrapper for node-postgres.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/131/pg-co.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/131/pg-co/issues"
+  },
+  "homepage": "https://github.com/131/pg-co#readme"
+}
