@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/131/pg-co/issues"
   },
-  "homepage": "https://github.com/131/pg-co#readme"
+  "homepage": "https://github.com/131/pg-co#readme",
+  "dependencies": {
+    "mout": "^0.11.0"
+  }
 }
