@@ -1,16 +1,17 @@
 A ES6 generator (async/await) [co](https://github.com/tj/co) compliant wrapper for node-postgres.
 
 # Example
+
 ```
 var pg  = require('pg-co');
 var SQL = require('sql-template');
 
 var conString = "postgres://postgres:1234@localhost/postgres";
 
-co(function*(){
-  var client = yield pg.connect(conString);
+var client = new pg(conString);
 
-  var line = yield client.qrow(SQL`SELECT * FROM users WHERE id=${22}`);
+co(function*(){
+  var line = yield client.row(SQL`SELECT * FROM users WHERE id=${22}`);
   if(!line)
     throw "Missing user";
 
@@ -18,7 +19,6 @@ co(function*(){
     user_id : 22,
     time    : Date.now(),
   });
-
 });
 
 ```

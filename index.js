@@ -33,14 +33,18 @@ class Pg {
   }
 
   * select(table, cond, cols) {
-    var query = SQL.select.apply(null, arguments);
+    var query = typeof table != "string" ? table : SQL.select.apply(null, arguments);
     var result = yield this.query(query);
     return Promise.resolve(result.rows);
   }
 
+  * value(table, cond, col) {
+    var row = yield this.row.apply(this, arguments);
+    return Promise.resolve(col ? row[col] : row[ Object.keys(row)[0] ]);
+  }
 
   * row(table, cond, cols) {
-    var rows = yield this.select.apply(arguments);
+    var rows = yield this.select.apply(this, arguments);
     return Promise.resolve(rows[0]);
   }
 
