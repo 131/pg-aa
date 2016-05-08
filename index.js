@@ -9,19 +9,33 @@ var values    = require('mout/object/values');
 
 
 class Pg {
-
-  constructor() {
+  constructor(conString) {
     this.transactions_stack = {};
+    this.conString = conString;
+
+    this._lnk = null;
+  }
+
+  * get_lnk() {
+    if(this._lnk)
+      return Promise.resolve(this._lnk);
+
+    this._lnk = new pg.Client(this.conString);
+    yield this._lnk.connect.bind(this._lnk);
+
+    return Promise.resolve(this._lnk);
   }
 
   * query(query) {
-    var result = yield this.lnk.query.bind(this.lnk, query);
-    return Promise.resolve(result.rows);
+    var lnk = yield this.get_lnk();
+    var result = yield lnk.query.bind(lnk, query);
+    return Promise.resolve(result);
   }
 
   * select(table, cond, cols) {
-    var query = SQL.select.apply(arguments);
-    return yield this.query(query);
+    var query = SQL.select.apply(null, arguments);
+    var result = yield this.query(query);
+    return Promise.resolve(result.rows);
   }
 
 
@@ -46,8 +60,7 @@ class Pg {
     return lnk.query(query);
   }
 
-  
-  private get_transaction_level() {
+  get_transaction_level() {
     var depths = values(this.transactions_stack);
     var level = depths.length ? Math.max.apply(null, depths ) + 1: 0;
     return level;
@@ -105,6 +118,18 @@ class Pg {
   }
 
 
+  close(){
+    if(!this._lnk)
+      return;
+    this._lnk.end();
+    this._lnk = null;
+  }
+
 
 
 }
+
+
+
+
+module.exports = Pg;
