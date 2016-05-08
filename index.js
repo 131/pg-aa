@@ -29,6 +29,7 @@ class Pg {
   * query(query) {
     var lnk = yield this.get_lnk();
     var result = yield lnk.query.bind(lnk, query);
+    //console.log(query.toString());
     return Promise.resolve(result);
   }
 
@@ -40,6 +41,8 @@ class Pg {
 
   * value(table, cond, col) {
     var row = yield this.row.apply(this, arguments);
+    if(!row)
+      return Promise.resolve(false);
     return Promise.resolve(col ? row[col] : row[ Object.keys(row)[0] ]);
   }
 
@@ -49,19 +52,20 @@ class Pg {
   }
 
   * col(table, cond, col){
-    var rows = yield this.select.apply(arguments);
+    var rows = yield this.select.apply(this, arguments);
 
     return Promise.resolve(pluck(rows, col));
   }
 
-  * insert(lnk, table, values){
-    return lnk.query(SQL`INSERT INTO $id${table} $insert${values}`);
+  * insert(table, values){
+    var query = SQL`INSERT INTO $id${table} $values${values}`;
+    return yield this.query(query);
   }
 
 
-  * update(lnk, table, values, where){
+  * update(table, values, where){
     var query = SQL`UPDATE $id${table} $set${values} $where${where}`;
-    return lnk.query(query);
+    return yield this.query(query);
   }
 
   get_transaction_level() {
@@ -70,10 +74,11 @@ class Pg {
     return level;
   }
   
-  * begin(lnk) {
+  * begin() {
     var transaction_hash = `_trans_${Math.random().toString(16).substr(2)}`;
 
     var level = this.get_transaction_level();
+
     this.transactions_stack[transaction_hash] = level;
 
     var query = `BEGIN`;
@@ -84,25 +89,25 @@ class Pg {
     return Promise.resolve(transaction_hash);
   }
 
-  * commit(lnk, transaction_hash) {
+  * commit(transaction_hash) {
     var level = this.transactions_stack[transaction_hash];
 
     if(level === undefined)
       throw `Incorrect transaction passed ${transaction_hash}`;
 
     delete this.transactions_stack[transaction_hash];
-    var max_depth = get_transaction_level();
+    var max_depth = this.get_transaction_level();
 
     if(max_depth > level)
       throw `Incorrect transaction level passed ${level} < ${max_depth}`;
 
     if(level == 0)
-      yield lnk.query(`COMMIT`);
+      yield this.query(`COMMIT`);
     return Promise.resolve(true);
   }
 
 
-  * rollback(lnk, transaction_hash) {
+  * rollback(transaction_hash) {
     var level = this.transactions_stack[transaction_hash];
 
     if(level === undefined)
@@ -117,7 +122,7 @@ class Pg {
     if(level > 0)
       query = `ROLLBACK TO SAVEPOINT ${transaction_hash}`;
 
-    yield lnk.query(query);
+    yield this.query(query);
     return Promise.resolve(true);
   }
 
