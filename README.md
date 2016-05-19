@@ -1,4 +1,5 @@
-A ES6 generator (async/await) [co](https://github.com/tj/co) compliant wrapper for node-postgres.
+A ES6 wrapper (co & generator based - async/await) for node-postgres.
+
 
 # Example
 
@@ -57,7 +58,11 @@ yield client.insert("users_log", {
 # API
 
 
-# Not invented here
+# Not invented here / key features
+* I dont want to rely on/use babel
+* Supported nested transaction (through savepoints)
+* Sane API = sane implementation
+
 
 # Credits
 * [131](https://github.com/131)

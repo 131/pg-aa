@@ -5,6 +5,7 @@ var SQL       = require('sql-template');
 
 var pluck     = require('mout/array/pluck');
 var values    = require('mout/object/values');
+var merge     = require('mout/object/merge');
 
 
 
@@ -14,7 +15,9 @@ class Pg {
     this.conString = conString;
 
     this._lnk = null;
+    this.pfx = {};
   }
+
 
   * get_lnk() {
     if(this._lnk)
@@ -28,6 +31,7 @@ class Pg {
 
   * query(query) {
     var lnk = yield this.get_lnk();
+    //console.log("Running query %s", query.text);
     var result = yield lnk.query.bind(lnk, query);
     //console.log(query.toString());
     return Promise.resolve(result);
@@ -66,6 +70,14 @@ class Pg {
   * update(table, values, where){
     var query = SQL`UPDATE $id${table} $set${values} $where${where}`;
     return yield this.query(query);
+  }
+
+  * replace(table, values, where){
+    let row = yield this.row(table, where, "*", "FOR UPDATE");
+    if(row)
+      yield this.update(table, values, where);
+    else
+      yield this.insert(table, merge({}, values, where))
   }
 
   get_transaction_level() {
