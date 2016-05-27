@@ -2,7 +2,6 @@ A ES6 wrapper (co & generator based - async/await style) for node-postgres.
 
 
 # Example
-
 ```
 var pg  = require('pg-co');
 var SQL = require('sql-template');
@@ -12,7 +11,9 @@ var conString = "postgres://postgres:1234@localhost/postgres";
 var client = new pg(conString);
 
 co(function*(){
-  var line = yield client.row(SQL`SELECT * FROM users WHERE id=${22}`);
+  var line;
+  line = yield client.row(SQL`SELECT * FROM users WHERE id=${22}`);
+  // same line = yield client.row('users', {id:22});
   if(!line)
     throw "Missing user";
 
@@ -21,12 +22,11 @@ co(function*(){
     time    : Date.now(),
   });
 });
-
 ```
 
 # API
 
-## await client.select(table /*[,condition = true [, columns = * [, extra ]]])
+## await client.select(table [,condition = true [, columns = * [, extra ]]])
 ## await client.select(PG_TEMPLATED_QUERY)
   Select stuffs ? what did you expect ...
 
@@ -37,7 +37,7 @@ var line = yield client.select(SQL`SELECT * FROM users WHERE parentId=${22}`);
 
 
 
-## await client.row(table /*[,condition = true [, columns = * [, extra = LIMIT 1 ]]])
+## await client.row(table [,condition = true [, columns = * [, extra = LIMIT 1 ]]])
 ## await client.row(PG_TEMPLATED_QUERY)
   return a single row, and a falsy value if no match (see example below)
 
@@ -47,7 +47,7 @@ var line = yield client.row(SQL`SELECT * FROM users WHERE id=${22}`);
 ```
 
 
-## await client.col(table /*[,condition = true [, column = * [, extra = '']]])
+## await client.col(table [,condition = true [, column = * [, extra = '']]])
 ## await client.col(PG_TEMPLATED_QUERY)
   return an array of values from a single column
 
