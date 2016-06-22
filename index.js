@@ -67,6 +67,12 @@ class Pg {
   }
 
 
+  * truncate(table){
+    var query = SQL`TRUNCATE TABLE $id${table}`;
+    return yield this.query(query);
+  }
+
+
   * update(table, values, where){
     var query = SQL`UPDATE $id${table} $set${values} $where${where}`;
     return yield this.query(query);
