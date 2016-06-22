@@ -91,10 +91,20 @@ yield client.replace("users_log", {
 });
 ```
 
+
+
+
 ## await client.query(queryString);
 ```
 yield client.query("TRUNCATE TABLE donttruncatemeplznooooo");
 ```
+
+
+## await client.truncate(tableName);
+```
+yield client.truncate("donttruncatemeplznooooo");
+```
+
 
 
 
