@@ -80,6 +80,14 @@ yield client.insert("users_log", {
 ```
 
 
+## await client.delete(table[, where])
+Delete rows in a table...
+
+```
+yield client.delete("users_log", "log_weight < 51");
+```
+
+
 ## await client.replace(table, values[, where])
 Replace values in a table... (lock select using * postgresql FOR UPDATE)
 

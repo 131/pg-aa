@@ -73,6 +73,12 @@ class Pg {
   }
 
 
+  * delete(table, where){
+    var query = SQL`DELETE FROM $id${table} $where${where}`;
+    return yield this.query(query);
+  }
+
+
   * update(table, values, where){
     var query = SQL`UPDATE $id${table} $set${values} $where${where}`;
     return yield this.query(query);
