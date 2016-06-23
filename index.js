@@ -46,7 +46,7 @@ class Pg {
   * value(table, cond, col) {
     var row = yield this.row.apply(this, arguments);
     if(!row)
-      return Promise.resolve(false);
+      return ; // Promise.resolve(false);
     return Promise.resolve(col ? row[col] : row[ Object.keys(row)[0] ]);
   }
 
@@ -80,6 +80,9 @@ class Pg {
 
 
   * update(table, values, where){
+    if(where === undefined)
+      where = true;
+
     var query = SQL`UPDATE $id${table} $set${values} $where${where}`;
     return yield this.query(query);
   }
@@ -152,6 +155,8 @@ class Pg {
 
 
   close(){
+    this.transactions_stack = {};
+
     if(!this._lnk)
       return;
     this._lnk.end();
