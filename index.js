@@ -19,7 +19,7 @@ class Pg {
   }
 
 
-  * get_lnk() {
+  * connect() {
     if(this._lnk)
       return Promise.resolve(this._lnk);
 
@@ -30,7 +30,7 @@ class Pg {
   }
 
   * query(query) {
-    var lnk = yield this.get_lnk();
+    var lnk = yield this.connect();
     //console.log("Running query %s", query.text);
     var result = yield lnk.query.bind(lnk, query);
     //console.log(query.toString());
