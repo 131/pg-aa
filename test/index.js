@@ -1,24 +1,28 @@
 "use strict";
 
 var co = require('co');
+var sleep = require('nyks/function/sleep');
 var SQL = require('sql-template');
 var expect = require('expect.js');
+var eachLimit = require('async-co/eachLimit');
 
 var pg = require('../');
 
 
-describe("Testing basic functions call", function(){
 
-  this.timeout(20000);
-  var lnk = new pg({
+
+describe("Testing basic functions call", function(){
+  var credentials = {
     host:'127.0.0.1',
     user:'postgres',
     database:'postgres',
-  });
+  };
+
+  this.timeout(20000);
+  var lnk = new pg(credentials);
 
 
-  it("Should create a database", co.wrap(function *(done){
-
+  it("Should create a database", function *(){
 
     var row = yield lnk.row(SQL`SELECT 42 AS answer`);
     expect(row).to.eql({answer:42});
@@ -67,10 +71,11 @@ describe("Testing basic functions call", function(){
     var rows = yield lnk.col('tmpp', true, 'foo');
     expect(rows).to.eql([]);
 
-  }));
+
+  });
 
 
-  it("Should test transactions", co.wrap(function *(done){
+  it("Should test transactions", function *(){
     var value, token, token2;
 
     yield lnk.query(SQL`CREATE TEMP  TABLE prices (price INTEGER)`);
@@ -205,8 +210,31 @@ describe("Testing basic functions call", function(){
     lnk.close();
 
 
+        //re-connect automaticaly
+    var value = yield lnk.value(SQL`SELECT 42 AS answer`);
+    expect(value).to.eql(value);
 
-  }));
+  });
+
+
+
+  it("should now test complexe & async operations", function*() {
+
+
+      //this do NOT work as expected, since pg can only serve one query at a time per socket
+    var tasks = [4,3,2]; 
+    yield eachLimit(tasks, tasks.length, function*(seed){
+      yield sleep(seed * 1000);
+      console.log("Seeding %d", seed);
+      var delay = 5 - seed, start = Date.now();
+      var value = yield lnk.value({text:`SELECT ${seed}, pg_sleep(${delay})`});
+      console.log("Got %d for seed %d, took %ds (estimated %ds)", value, seed, (Date.now() - start)/1000, delay);
+      expect(value).to.eql(seed);
+    });
+
+
+
+  });
 
 
 
