@@ -25,6 +25,8 @@
     "sql-template": "^0.4.0"
   },
   "devDependencies": {
+    "co": "^4.6.0",
+    "nyks": "^3.1.1",
     "expect.js": "^0.3.1",
     "mocha": "^2.2.5",
     "istanbul": "~0.3.18",
