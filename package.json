@@ -25,11 +25,12 @@
     "sql-template": "^0.4.0"
   },
   "devDependencies": {
+    "async-co": "^1.1.0",
     "co": "^4.6.0",
-    "nyks": "^3.1.1",
     "expect.js": "^0.3.1",
-    "mocha": "^2.2.5",
     "istanbul": "~0.3.18",
-    "mocha-plugin-co": "^1.0.0"
+    "mocha": "^2.2.5",
+    "mocha-plugin-co": "^1.0.0",
+    "nyks": "^3.1.1"
   }
 }
