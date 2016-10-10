@@ -1,11 +1,11 @@
 "use strict";
 
-var pg        = require('pg');
-var SQL       = require('sql-template');
+const pg        = require('pg');
+const SQL       = require('sql-template');
 
-var pluck     = require('mout/array/pluck');
-var values    = require('mout/object/values');
-var merge     = require('mout/object/merge');
+const pluck     = require('mout/array/pluck');
+const values    = require('mout/object/values');
+const merge     = require('mout/object/merge');
 
 
 

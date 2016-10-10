@@ -1,12 +1,12 @@
 "use strict";
 
-var co = require('co');
-var sleep = require('nyks/function/sleep');
-var SQL = require('sql-template');
-var expect = require('expect.js');
-var eachLimit = require('async-co/eachLimit');
+const co     = require('co');
+const sleep  = require('nyks/function/sleep');
+const SQL    = require('sql-template');
+const expect = require('expect.js');
+const eachLimit = require('async-co/eachLimit');
 
-var pg = require('../');
+const pg = require('../');
 
 
 
