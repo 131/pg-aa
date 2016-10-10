@@ -140,3 +140,8 @@ else  await client.rollback(transaction_token);
 
 # Credits
 * [131](https://github.com/131)
+
+
+
+[![Build Status](https://travis-ci.org/131/pg-co.svg?branch=master)](https://travis-ci.org/131/pg-co)
+[![Coverage Status](https://coveralls.io/repos/github/131/pg-co/badge.svg?branch=master)](https://coveralls.io/github/131/pg-co?branch=master)
