@@ -171,3 +171,4 @@ class Pg {
 
 
 module.exports = Pg;
+module.exports.transformers = SQL.transfomers;

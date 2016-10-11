@@ -22,7 +22,7 @@
   "dependencies": {
     "mout": "^1.0.0",
     "pg": "^4.5.3",
-    "sql-template": "^0.4.0"
+    "sql-template": "^1.0.0"
   },
   "devDependencies": {
     "async-co": "^1.1.0",

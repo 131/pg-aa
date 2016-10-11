@@ -1,6 +1,13 @@
 A ES6 wrapper (co & generator based - async/await style) for node-postgres.
 
 
+
+[![Build Status](https://travis-ci.org/131/pg-co.svg?branch=master)](https://travis-ci.org/131/pg-co)
+[![Coverage Status](https://coveralls.io/repos/github/131/pg-co/badge.svg?branch=master)](https://coveralls.io/github/131/pg-co?branch=master)
+[![NPM version](https://img.shields.io/npm/v/pg-co.svg)](https://www.npmjs.com/package/pg-co)
+
+
+
 # Example
 ```
 var pg  = require('pg-co');
@@ -141,7 +148,3 @@ else  await client.rollback(transaction_token);
 # Credits
 * [131](https://github.com/131)
 
-
-
-[![Build Status](https://travis-ci.org/131/pg-co.svg?branch=master)](https://travis-ci.org/131/pg-co)
-[![Coverage Status](https://coveralls.io/repos/github/131/pg-co/badge.svg?branch=master)](https://coveralls.io/github/131/pg-co?branch=master)
