@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/131/pg-co#readme",
   "dependencies": {
+    "debug": "^2.2.0",
     "mout": "^1.0.0",
     "pg": "^4.5.3",
     "sql-template": "^1.0.0"

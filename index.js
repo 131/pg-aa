@@ -7,7 +7,7 @@ const pluck     = require('mout/array/pluck');
 const values    = require('mout/object/values');
 const merge     = require('mout/object/merge');
 
-
+const debug     = require('debug')('pg-co');
 
 class Pg {
   constructor(conString) {
@@ -31,9 +31,9 @@ class Pg {
 
   * query(query) {
     var lnk = yield this.connect();
-    //console.log("Running query %s", query.text);
+    debug("Running query %s", query.text);
     var result = yield lnk.query.bind(lnk, query);
-    //console.log(query.toString());
+    debug(query.toString());
     return Promise.resolve(result);
   }
 
