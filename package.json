@@ -1,6 +1,6 @@
 {
   "name": "pg-co",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "A ES6 generator (async/await) [co](https://github.com/tj/co) compliant wrapper for node-postgres.",
   "main": "index.js",
   "scripts": {
