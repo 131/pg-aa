@@ -6,11 +6,14 @@ const SQL       = require('sql-template');
 const pluck     = require('mout/array/pluck');
 const values    = require('mout/object/values');
 const merge     = require('mout/object/merge');
+const Events    = require('eventemitter-co');
 
 const debug     = require('debug')('pg-co');
 
-class Pg {
+class Pg extends Events {
+
   constructor(conString) {
+    super();
     this.transactions_stack = {};
     this.conString = conString;
 
@@ -23,10 +26,29 @@ class Pg {
     if(this._lnk)
       return Promise.resolve(this._lnk);
 
-    this._lnk = new pg.Client(this.conString);
-    yield this._lnk.connect.bind(this._lnk);
+    var lnk = new pg.Client(this.conString);
 
-    return Promise.resolve(this._lnk);
+    var error = function(err){ };
+    lnk.on('error', error); //subscribe to eventemitter to prevent un-stacked throw
+
+      //this will throw on connection failure (server is starting up ...)
+    yield lnk.connect.bind(lnk); 
+
+      //this will throw on credentials errors //now waiting for async credentials errors
+      //let's run a dummy query to force credentails validation now !
+      //you can try to just "sleep" (but to wait for .. ?)
+    try {
+      yield lnk.query.bind(lnk, "DISCARD ALL");
+    } finally  {
+      lnk.removeListener('error', error);
+    }
+
+    lnk.on('error', (err) => {
+      this.emit('error', err);
+    });
+
+    this._lnk = lnk;
+    return Promise.resolve(lnk);
   }
 
   * query(query) {

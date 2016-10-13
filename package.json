@@ -22,7 +22,7 @@
   "dependencies": {
     "debug": "^2.2.0",
     "mout": "^1.0.0",
-    "pg": "^4.5.3",
+    "pg": "^6.1.0",
     "sql-template": "^1.0.0"
   },
   "devDependencies": {
