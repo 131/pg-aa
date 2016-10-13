@@ -28,24 +28,11 @@ class Pg extends Events {
 
     var lnk = new pg.Client(this.conString);
 
-    var error = function(err){ };
-    lnk.on('error', error); //subscribe to eventemitter to prevent un-stacked throw
-
-      //this will throw on connection failure (server is starting up ...)
-    yield lnk.connect.bind(lnk); 
-
-      //this will throw on credentials errors //now waiting for async credentials errors
-      //let's run a dummy query to force credentails validation now !
-      //you can try to just "sleep" (but to wait for .. ?)
-    try {
-      yield lnk.query.bind(lnk, "DISCARD ALL");
-    } finally  {
-      lnk.removeListener('error', error);
-    }
-
     lnk.on('error', (err) => {
       this.emit('error', err);
     });
+
+    yield lnk.connect.bind(lnk);
 
     this._lnk = lnk;
     return Promise.resolve(lnk);
