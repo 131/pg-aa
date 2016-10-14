@@ -56,7 +56,9 @@ class Pg extends Events {
     var row = yield this.row.apply(this, arguments);
     if(!row)
       return ; // Promise.resolve(false);
-    return Promise.resolve(col ? row[col] : row[ Object.keys(row)[0] ]);
+
+    var value = col && col in row ? row[col] : row[ Object.keys(row)[0] ]
+    return Promise.resolve(value);
   }
 
   * row(table, cond, cols) {
