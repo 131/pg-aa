@@ -180,5 +180,6 @@ class Pg extends Events {
 
 
 module.exports = Pg;
+module.exports.SQL = SQL;
 module.exports.transformers = SQL.transformers;
 
