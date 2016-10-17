@@ -22,7 +22,7 @@ describe("Testing basic functions call", function(){
   var lnk = new pg(credentials);
 
 
-  it("Should create a database", function *(){
+  it("Should test basic API", function *(){
 
     var row = yield lnk.row(SQL`SELECT 42 AS answer`);
     expect(row).to.eql({answer:42});
@@ -218,6 +218,7 @@ describe("Testing basic functions call", function(){
 
 
 
+  if(false)
   it("should now test complexe & async operations", function*() {
 
 
@@ -231,6 +232,38 @@ describe("Testing basic functions call", function(){
       console.log("Got %d for seed %d, took %ds (estimated %ds)", value, seed, (Date.now() - start)/1000, delay);
       expect(value).to.eql(seed);
     });
+
+
+
+  });
+
+
+  it("should rollback properly on invalid commit", function * (){
+
+    yield lnk.query(`CREATE TEMP TABLE users (user_id INTEGER)`);
+    yield lnk.query(`ALTER TABLE users 
+        ADD CONSTRAINT uniqueUser UNIQUE(user_id)
+        DEFERRABLE INITIALLY DEFERRED;`);
+
+    try {
+      var token = yield lnk.begin();
+
+      yield lnk.insert('users', {user_id:12});
+      yield lnk.insert('users', {user_id:12});
+
+      var rows = yield lnk.select('users');
+      expect(rows.length).to.eql(2);
+
+      yield lnk.commit(token);
+
+     // throw "Should never be here";
+    } catch(err) {
+      expect(err.message).to.match(/duplicate key value violates unique constraint/);
+      yield lnk.rollback(token);
+    }
+
+    var rows = yield lnk.select('users');
+    expect(rows.length).to.eql(0);
 
 
 

@@ -28,6 +28,7 @@ class Pg extends Events {
 
     var lnk = new pg.Client(this.conString);
 
+      /* istanbul ignore next */
     lnk.on('error', (err) => {
       this.emit('error', err);
     });
@@ -139,8 +140,16 @@ class Pg extends Events {
     if(max_depth > level)
       throw `Incorrect transaction level passed ${level} < ${max_depth}`;
 
-    if(level == 0)
-      yield this.query(`COMMIT`);
+    if(level == 0) {
+      try {
+        yield this.query(`COMMIT`);
+      } catch(err) {
+          //re-instante transaction level so it can be rolledback
+        this.transactions_stack[transaction_hash] = level;
+        throw err;
+      }
+    }
+
     return Promise.resolve(true);
   }
 
