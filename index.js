@@ -41,7 +41,6 @@ class Pg extends Events {
 
   * query(query) {
     var lnk = yield this.connect();
-    debug("Running query %s", query.text);
     var result = yield lnk.query.bind(lnk, query);
     debug(query.toString());
     return Promise.resolve(result);
@@ -144,7 +143,7 @@ class Pg extends Events {
       try {
         yield this.query(`COMMIT`);
       } catch(err) {
-          //re-instante transaction level so it can be rolledback
+          //re-instate transaction level so it can be rolledback
         this.transactions_stack[transaction_hash] = level;
         throw err;
       }
