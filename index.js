@@ -41,8 +41,8 @@ class Pg extends Events {
 
   * query(query) {
     var lnk = yield this.connect();
-    var result = yield lnk.query.bind(lnk, query);
     debug(query.toString());
+    var result = yield lnk.query.bind(lnk, query);
     return Promise.resolve(result);
   }
 
