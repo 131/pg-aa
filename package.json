@@ -24,7 +24,7 @@
     "eventemitter-co": "^1.0.4",
     "mout": "^1.0.0",
     "pg": "^6.1.0",
-    "sql-template": "^1.1.1"
+    "sql-template": "^1.1.2"
   },
   "devDependencies": {
     "async-co": "^1.1.0",
