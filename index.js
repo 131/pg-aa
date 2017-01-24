@@ -33,9 +33,9 @@ class Pg extends Events {
 
     if(this._isPooled) {
       lnk = yield this._src.connect();
-      lnk.on('error', (err) => {  this.emit('error', err); });
     } else {
       lnk =  new pg.Client(this._src);
+        /* istanbul ignore next */
       lnk.on('error', (err) => {  this.emit('error', err); });
       yield lnk.connect.bind(lnk);
     }
@@ -183,7 +183,6 @@ class Pg extends Events {
 
     if(!this._lnk)
       return;
-
     (this._lnk[this._isPooled ? 'release' : 'end'])();
     this._lnk = null;
   }

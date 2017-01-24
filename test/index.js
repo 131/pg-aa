@@ -12,11 +12,8 @@ const pg = require('../');
 
 
 describe("Testing basic functions call", function(){
-  var credentials = {
-    host:'127.0.0.1',
-    user:'postgres',
-    database:'postgres',
-  };
+    var credentials = require('./db.json').admin;
+
 
   this.timeout(20000);
   var lnk = new pg(credentials);
