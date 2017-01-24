@@ -4,6 +4,7 @@
   "description": "A ES6 generator (async/await) [co](https://github.com/tj/co) compliant wrapper for node-postgres.",
   "main": "index.js",
   "scripts": {
+    "pgserver": "cnyks pg-ctl test/db.json --ir://start=connect_or_start_server",
     "mocha": "node node_modules/mocha/bin/_mocha -r mocha-plugin-co",
     "test": "node node_modules/istanbul/lib/cli.js cover --report text-summary --report html --report lcov  node_modules/mocha/bin/_mocha -- -r mocha-plugin-co",
     "coveralls": "npm install coveralls && node ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"
@@ -33,6 +34,7 @@
     "istanbul": "~0.3.18",
     "mocha": "^2.2.5",
     "mocha-plugin-co": "^1.0.0",
-    "nyks": "^3.1.1"
+    "nyks": "^3.11.0",
+    "pg-ctl": "^1.2.4"
   }
 }

@@ -6,19 +6,22 @@ const SQL       = require('sql-template');
 const pluck     = require('mout/array/pluck');
 const values    = require('mout/object/values');
 const merge     = require('mout/object/merge');
+const sprintf   = require('util').format;
+
 const Events    = require('eventemitter-co');
 
 const debug     = require('debug')('pg-co');
 
 class Pg extends Events {
 
-  constructor(conString) {
+  constructor(src, fromPool) {
     super();
     this.transactions_stack = {};
-    this.conString = conString;
 
     this._lnk = null;
     this.pfx = {};
+    this._isPooled = !!fromPool;
+    this._src = src;
   }
 
 
@@ -26,14 +29,16 @@ class Pg extends Events {
     if(this._lnk)
       return Promise.resolve(this._lnk);
 
-    var lnk = new pg.Client(this.conString);
+    var lnk;
 
-      /* istanbul ignore next */
-    lnk.on('error', (err) => {
-      this.emit('error', err);
-    });
-
-    yield lnk.connect.bind(lnk);
+    if(this._isPooled) {
+      lnk = yield this._src.connect();
+      lnk.on('error', (err) => {  this.emit('error', err); });
+    } else {
+      lnk =  new pg.Client(this._src);
+      lnk.on('error', (err) => {  this.emit('error', err); });
+      yield lnk.connect.bind(lnk);
+    }
 
     this._lnk = lnk;
     return Promise.resolve(lnk);
@@ -173,18 +178,37 @@ class Pg extends Events {
   }
 
 
-  close(){
+  close() {
     this.transactions_stack = {};
 
     if(!this._lnk)
       return;
-    this._lnk.end();
+
+    (this._lnk[this._isPooled ? 'release' : 'end'])();
     this._lnk = null;
   }
 
+  static pooled(conString) {
+    if(!Pg.lnkCache)
+      Pg.lnkCache = {};
+
+    var hash = sprintf("%s@%s/%s", conString.user, conString.host, conString.database);
+    var pool = Pg.lnkCache[hash];
+    if(!pool) {
+      pool = new pg.Pool(conString);
+      Pg.lnkCache[hash] = pool;
+        /* istanbul ignore next */
+      pool.on('error', (err) => {
+        debug('error', err);
+      });
+    }
+
+    return new Pg(pool, true);
+  }
 
 
 }
+
 
 
 

@@ -1,0 +1,13 @@
+{
+  "admin" : {
+    "host":"127.0.0.1",
+    "database" :"postgres",
+    "user" : "postgres",
+    "dataDir" : "data"
+  },
+
+  "dbname" : "postgres",
+
+  "user"     : "postgres"
+
+}
