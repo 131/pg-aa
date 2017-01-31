@@ -6,7 +6,7 @@
     "dataDir" : "data"
   },
 
-  "dbname" : "postgres",
+  "database" : "postgres",
 
   "user"     : "postgres"
 

@@ -178,13 +178,16 @@ class Pg extends Events {
   }
 
 
-  close() {
+  close(closePool) {
     this.transactions_stack = {};
 
-    if(!this._lnk)
-      return;
-    (this._lnk[this._isPooled ? 'release' : 'end'])();
-    this._lnk = null;
+    if(this._lnk) {
+      (this._lnk[this._isPooled ? 'release' : 'end'])();
+      this._lnk = null;
+    }
+
+    if(this._isPooled &&  closePool)
+      return this._src.end()
   }
 
   static pooled(conString) {

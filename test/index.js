@@ -262,7 +262,7 @@ describe("Testing basic functions call", function(){
     var rows = yield lnk.select('users');
     expect(rows.length).to.eql(0);
 
-
+    lnk.close();
 
   });
 
