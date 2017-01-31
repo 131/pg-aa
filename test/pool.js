@@ -67,6 +67,13 @@ describe("Testing lnk pooling", function(){
 
   });
 
+  it("Should re-open the pool", function *(){
+    var lnk = pg.pooled(credentials);
+
+    var row = yield lnk.row(SQL`SELECT 42 AS answer`);
+    expect(row).to.eql({answer:42});
+    lnk.close();
+  });
 
 
 

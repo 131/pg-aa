@@ -187,7 +187,7 @@ class Pg extends Events {
     }
 
     if(this._isPooled &&  closePool)
-      return this._src.end()
+      return this._src.close()
   }
 
   static pooled(conString) {
@@ -199,6 +199,10 @@ class Pg extends Events {
     if(!pool) {
       pool = new pg.Pool(conString);
       Pg.lnkCache[hash] = pool;
+      pool.close = function(){
+       delete Pg.lnkCache[hash];
+       return pool.end();
+      }
         /* istanbul ignore next */
       pool.on('error', (err) => {
         debug('error', err);
