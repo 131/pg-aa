@@ -24,6 +24,9 @@ class Pg extends Events {
     this._src = src;
   }
 
+  get lnk() {
+    return this;
+  }
 
   * connect() {
     if(this._lnk)

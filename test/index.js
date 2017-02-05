@@ -72,6 +72,11 @@ describe("Testing basic functions call", function(){
   });
 
 
+
+  it("Should expose transparent .lnk redirection", function *(){
+    expect(lnk).to.be(lnk.lnk);
+  });
+
   it("Should test transactions", function *(){
     var value, token, token2;
 
