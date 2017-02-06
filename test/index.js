@@ -49,6 +49,8 @@ describe("Testing basic functions call", function(){
 
     yield lnk.update('tmpp', {foo:12});
     
+
+
     var rows = yield lnk.col('tmpp', true, 'foo');
     expect(rows).to.eql([12, 12]);
 
@@ -63,6 +65,13 @@ describe("Testing basic functions call", function(){
     yield lnk.replace('tmpp', {foo:8}, {foo:8});
     var rows = yield lnk.col('tmpp', true, 'foo');
     expect(rows).to.eql([8]);
+
+
+      //should allow to replace nothing
+    yield lnk.replace('tmpp', {}, {foo:8});
+    var rows = yield lnk.col('tmpp', true, 'foo');
+    expect(rows).to.eql([8]);
+
 
     yield lnk.truncate('tmpp');
     var rows = yield lnk.col('tmpp', true, 'foo');

@@ -98,10 +98,12 @@ class Pg extends Events {
   }
 
 
-  * update(table, values, where){
+  * update(table, values, where) {
     if(where === undefined)
       where = true;
 
+    if(Object.keys(values).length == 0)
+      return;
     var query = SQL`UPDATE $id${table} $set${values} $where${where}`;
     return yield this.query(query);
   }
