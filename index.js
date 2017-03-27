@@ -35,6 +35,7 @@ class Pg extends Events {
     var lnk;
 
     if(this._isPooled) {
+
       lnk = yield this._src.connect();
     } else {
       lnk =  new pg.Client(this._src);
@@ -188,6 +189,7 @@ class Pg extends Events {
     this.transactions_stack = {};
 
     if(this._lnk) {
+      this._lnk.removeAllListeners('notification');
       (this._lnk[this._isPooled ? 'release' : 'end'])();
       this._lnk = null;
     }
@@ -228,4 +230,3 @@ class Pg extends Events {
 module.exports = Pg;
 module.exports.SQL = SQL;
 module.exports.transformers = SQL.transformers;
-
