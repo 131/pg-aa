@@ -44,6 +44,7 @@ class Pg extends Events {
     }
 
     this._lnk = lnk;
+    lnk.on('notification', this.emit.bind(this, 'notification'));
     return Promise.resolve(lnk);
   }
 
