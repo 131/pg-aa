@@ -4,7 +4,6 @@ const co     = require('co');
 const sleep  = require('nyks/function/sleep');
 const SQL    = require('sql-template');
 const expect = require('expect.js');
-const eachLimit = require('async-co/eachLimit');
 
 const pg = require('../');
 
@@ -16,19 +15,19 @@ describe("Testing lnk pooling", function(){
 
   this.timeout(200 * 1000);
 
-  it("Should test basic API", function *(){
+  it("Should test basic API", async function(){
     var lnk = pg.pooled(credentials);
 
-    var row = yield lnk.row(SQL`SELECT 42 AS answer`);
+    var row = await lnk.row(SQL`SELECT 42 AS answer`);
     expect(row).to.eql({answer:42});
     lnk.close();
   });
 
 
-  it("Should support connexion stress", function * (){
+  it("Should support connexion stress", async function (){
     for(var a= 0;a<1000;a++) {
       let tmp = pg.pooled(credentials);
-      let row = yield tmp.row(SQL`SELECT 42 AS answer`);
+      let row = await tmp.row(SQL`SELECT 42 AS answer`);
       expect(row).to.eql({answer:42});
       tmp.close();
 
@@ -36,11 +35,11 @@ describe("Testing lnk pooling", function(){
   });
 
 
-  it("Should test basic API", function *(){
+  it("Should test basic API", async function(){
     var lnk = pg.pooled(credentials);
 
     try {
-      var row = yield lnk.row(SQL`SELEC`);
+      var row = await lnk.row(SQL`SELEC`);
       expect().fail("Should never be here");
     } catch(err) {
       expect(""+err).to.eql(`error: syntax error at or near "SELEC"`);
@@ -51,15 +50,15 @@ describe("Testing lnk pooling", function(){
   });
 
 
-  it("Should force the pool closing", function * (){
+  it("Should force the pool closing", async function (){
     let tmp = pg.pooled(credentials);
-    let row = yield tmp.row(SQL`SELECT 42 AS answer`);
+    let row = await tmp.row(SQL`SELECT 42 AS answer`);
     expect(row).to.eql({answer:42});
     var before = process._getActiveHandles().length, after;
 
     tmp.close();
-    yield tmp.close(true);
-    yield sleep(100);
+    await tmp.close(true);
+    await sleep(100);
     after = process._getActiveHandles().length;
     expect(before).to.be.greaterThan(after);
 
@@ -67,10 +66,10 @@ describe("Testing lnk pooling", function(){
 
   });
 
-  it("Should re-open the pool", function *(){
+  it("Should re-open the pool", async function(){
     var lnk = pg.pooled(credentials);
 
-    var row = yield lnk.row(SQL`SELECT 42 AS answer`);
+    var row = await lnk.row(SQL`SELECT 42 AS answer`);
     expect(row).to.eql({answer:42});
     lnk.close();
   });

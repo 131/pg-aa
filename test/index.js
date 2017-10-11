@@ -228,25 +228,6 @@ describe("Testing basic functions call", function(){
 
 
 
-  if(false)
-  it("should now test complexe & async operations", async function() {
-
-
-      //this do NOT work as expected, since pg can only serve one query at a time per socket
-    var tasks = [4,3,2]; 
-    await eachLimit(tasks, tasks.length, async function(seed){
-      await sleep(seed * 1000);
-      console.log("Seeding %d", seed);
-      var delay = 5 - seed, start = Date.now();
-      var value = await lnk.value({text:`SELECT ${seed}, pg_sleep(${delay})`});
-      console.log("Got %d for seed %d, took %ds (estimated %ds)", value, seed, (Date.now() - start)/1000, delay);
-      expect(value).to.eql(seed);
-    });
-
-
-
-  });
-
 
   it("should rollback properly on invalid commit", async function (){
 
