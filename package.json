@@ -1,6 +1,6 @@
 {
   "name": "pg-aa",
-  "version": "1.13.1",
+  "version": "2.0.0",
   "description": "A ES6 generator (async/await) [co](https://github.com/tj/co) compliant wrapper for node-postgres.",
   "main": "index.js",
   "scripts": {
