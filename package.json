@@ -1,12 +1,12 @@
 {
-  "name": "pg-co",
+  "name": "pg-aa",
   "version": "1.13.1",
   "description": "A ES6 generator (async/await) [co](https://github.com/tj/co) compliant wrapper for node-postgres.",
   "main": "index.js",
   "scripts": {
     "pgserver": "cnyks pg-ctl test/db.json --ir://start=connect_or_start_server",
-    "mocha": "node node_modules/mocha/bin/_mocha -r mocha-plugin-co",
-    "test": "node node_modules/istanbul/lib/cli.js cover --report text-summary --report html --report lcov  node_modules/mocha/bin/_mocha -- -r mocha-plugin-co",
+    "mocha": "node node_modules/mocha/bin/_mocha",
+    "test": "node node_modules/istanbul/lib/cli.js cover --report text-summary --report html --report lcov  node_modules/mocha/bin/_mocha",
     "coveralls": "npm install coveralls && node ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"
   },
   "repository": {
@@ -22,18 +22,14 @@
   "homepage": "https://github.com/131/pg-co#readme",
   "dependencies": {
     "debug": "^2.2.0",
-    "eventemitter-co": "^1.0.4",
     "mout": "^1.0.0",
     "pg": "^6.1.0",
     "sql-template": "^1.1.2"
   },
   "devDependencies": {
-    "async-co": "^1.1.0",
-    "co": "^4.6.0",
     "expect.js": "^0.3.1",
-    "istanbul": "~0.3.18",
+    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^3.2.0",
-    "mocha-plugin-co": "^1.0.0",
     "nyks": "^3.11.0",
     "pg-ctl": "^1.3.1"
   }

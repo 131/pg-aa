@@ -8,11 +8,11 @@ const values    = require('mout/object/values');
 const merge     = require('mout/object/merge');
 const sprintf   = require('util').format;
 
-const Events    = require('eventemitter-co');
+const Event    = require('events').EventEmitter;
 
-const debug     = require('debug')('pg-co');
+const debug     = require('debug')('pg-aa');
 
-class Pg extends Events {
+class Pg extends Event {
 
   constructor(src, fromPool) {
     super();
@@ -28,94 +28,94 @@ class Pg extends Events {
     return this;
   }
 
-  * connect() {
+  async connect() {
     if(this._lnk)
-      return Promise.resolve(this._lnk);
+      return this._lnk;
 
     var lnk;
 
     if(this._isPooled) {
 
-      lnk = yield this._src.connect();
+      lnk = await this._src.connect();
     } else {
       lnk =  new pg.Client(this._src);
         /* istanbul ignore next */
       lnk.on('error', (err) => {  this.emit('error', err); });
-      yield lnk.connect.bind(lnk);
+      await lnk.connect();
     }
 
     this._lnk = lnk;
     lnk.on('notification', this.emit.bind(this, 'notification'));
-    return Promise.resolve(lnk);
+    return lnk;
   }
 
-  * query(query) {
-    var lnk = yield this.connect();
+  async query(query) {
+    var lnk = await this.connect();
     debug(query.toString());
-    var result = yield lnk.query.bind(lnk, query);
-    return Promise.resolve(result);
+    var result = await lnk.query(query);
+    return result;
   }
 
-  * select(table, cond, cols) {
+  async select(table, cond, cols) {
     var query = typeof table != "string" ? table : SQL.select.apply(null, arguments);
-    var result = yield this.query(query);
-    return Promise.resolve(result.rows);
+    var result = await this.query(query);
+    return result.rows;
   }
 
-  * value(table, cond, col) {
-    var row = yield this.row.apply(this, arguments);
+  async value(table, cond, col) {
+    var row = await this.row.apply(this, arguments);
     if(!row)
-      return ; // Promise.resolve(false);
+      return ;
 
     var value = col && col in row ? row[col] : row[ Object.keys(row)[0] ]
-    return Promise.resolve(value);
+    return value;
   }
 
-  * row(table, cond, cols) {
-    var rows = yield this.select.apply(this, arguments);
-    return Promise.resolve(rows[0]);
+  async row(table, cond, cols) {
+    var rows = await this.select.apply(this, arguments);
+    return rows[0];
   }
 
-  * col(table, cond, col){
-    var rows = yield this.select.apply(this, arguments);
+  async col(table, cond, col){
+    var rows = await this.select.apply(this, arguments);
 
-    return Promise.resolve(pluck(rows, col));
+    return pluck(rows, col);
   }
 
-  * insert(table, values){
+  async insert(table, values){
     var query = SQL`INSERT INTO $id${table} $values${values}`;
-    return yield this.query(query);
+    return await this.query(query);
   }
 
 
-  * truncate(table){
+  async truncate(table){
     var query = SQL`TRUNCATE TABLE $id${table}`;
-    return yield this.query(query);
+    return await this.query(query);
   }
 
 
-  * delete(table, where){
+  async delete(table, where){
     var query = SQL`DELETE FROM $id${table} $where${where}`;
-    return yield this.query(query);
+    return await this.query(query);
   }
 
 
-  * update(table, values, where) {
+  async update(table, values, where) {
     if(where === undefined)
       where = true;
 
     if(Object.keys(values).length == 0)
       return;
     var query = SQL`UPDATE $id${table} $set${values} $where${where}`;
-    return yield this.query(query);
+    return await this.query(query);
   }
 
-  * replace(table, values, where){
-    let row = yield this.row(table, where, "*", "FOR UPDATE");
+  async replace(table, values, where){
+    let row = await this.row(table, where, "*", "FOR UPDATE");
     if(row)
-      yield this.update(table, values, where);
+      await this.update(table, values, where);
     else
-      yield this.insert(table, merge({}, values, where))
+      await this.insert(table, merge({}, values, where))
   }
 
   get_transaction_level() {
@@ -124,7 +124,7 @@ class Pg extends Events {
     return level;
   }
   
-  * begin() {
+  async begin() {
     var transaction_hash = `_trans_${Math.random().toString(16).substr(2)}`;
 
     var level = this.get_transaction_level();
@@ -135,11 +135,11 @@ class Pg extends Events {
     if(level != 0)
       query = `SAVEPOINT ${transaction_hash}`;
 
-    yield this.query(query);
-    return Promise.resolve(transaction_hash);
+    await this.query(query);
+    return transaction_hash;
   }
 
-  * commit(transaction_hash) {
+  async commit(transaction_hash) {
     var level = this.transactions_stack[transaction_hash];
 
     if(level === undefined)
@@ -153,7 +153,7 @@ class Pg extends Events {
 
     if(level == 0) {
       try {
-        yield this.query(`COMMIT`);
+        await this.query(`COMMIT`);
       } catch(err) {
           //re-instate transaction level so it can be rolledback
         this.transactions_stack[transaction_hash] = level;
@@ -161,11 +161,11 @@ class Pg extends Events {
       }
     }
 
-    return Promise.resolve(true);
+    return true;
   }
 
 
-  * rollback(transaction_hash) {
+  async rollback(transaction_hash) {
     var level = this.transactions_stack[transaction_hash];
 
     if(level === undefined)
@@ -180,8 +180,8 @@ class Pg extends Events {
     if(level > 0)
       query = `ROLLBACK TO SAVEPOINT ${transaction_hash}`;
 
-    yield this.query(query);
-    return Promise.resolve(true);
+    await this.query(query);
+    return true;
   }
 
 
@@ -225,8 +225,7 @@ class Pg extends Events {
 
 
 
-
-
 module.exports = Pg;
 module.exports.SQL = SQL;
 module.exports.transformers = SQL.transformers;
+
