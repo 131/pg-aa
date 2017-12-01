@@ -1,6 +1,6 @@
 "use strict";
 
-const pg        = require('pg');
+const Pg        = require('pg');
 const SQL       = require('sql-template');
 
 const pluck     = require('mout/array/pluck');
@@ -12,7 +12,7 @@ const Event    = require('events').EventEmitter;
 
 const debug     = require('debug')('pg-aa');
 
-class Pg extends Event {
+class PG extends Event {
 
   constructor(src, fromPool) {
     super();
@@ -38,8 +38,8 @@ class Pg extends Event {
 
       lnk = await this._src.connect();
     } else {
-      lnk =  new pg.Client(this._src);
-        /* istanbul ignore next */
+      lnk =  new Pg.Client(this._src);
+      /* istanbul ignore next */
       lnk.on('error', (err) => {  this.emit('error', err); });
       await lnk.connect();
     }
@@ -56,7 +56,7 @@ class Pg extends Event {
     return result;
   }
 
-  async select(table, cond, cols) {
+  async select(table /*, cond, cols*/) {
     var query = typeof table != "string" ? table : SQL.select.apply(null, arguments);
     var result = await this.query(query);
     return result.rows;
@@ -67,34 +67,34 @@ class Pg extends Event {
     if(!row)
       return ;
 
-    var value = col && col in row ? row[col] : row[ Object.keys(row)[0] ]
+    var value = col && col in row ? row[col] : row[ Object.keys(row)[0] ];
     return value;
   }
 
-  async row(table, cond, cols) {
+  async row(/*table, cond, cols*/) {
     var rows = await this.select.apply(this, arguments);
     return rows[0];
   }
 
-  async col(table, cond, col){
+  async col(table, cond, col) {
     var rows = await this.select.apply(this, arguments);
 
     return pluck(rows, col);
   }
 
-  async insert(table, values){
+  async insert(table, values) {
     var query = SQL`INSERT INTO $id${table} $values${values}`;
     return await this.query(query);
   }
 
 
-  async truncate(table){
+  async truncate(table) {
     var query = SQL`TRUNCATE TABLE $id${table}`;
     return await this.query(query);
   }
 
 
-  async delete(table, where){
+  async delete(table, where) {
     var query = SQL`DELETE FROM $id${table} $where${where}`;
     return await this.query(query);
   }
@@ -110,20 +110,20 @@ class Pg extends Event {
     return await this.query(query);
   }
 
-  async replace(table, values, where){
+  async replace(table, values, where) {
     let row = await this.row(table, where, "*", "FOR UPDATE");
     if(row)
       await this.update(table, values, where);
     else
-      await this.insert(table, merge({}, values, where))
+      await this.insert(table, merge({}, values, where));
   }
 
   get_transaction_level() {
     var depths = values(this.transactions_stack);
-    var level = depths.length ? Math.max.apply(null, depths ) + 1: 0;
+    var level = depths.length ? Math.max.apply(null, depths) + 1 : 0;
     return level;
   }
-  
+
   async begin() {
     var transaction_hash = `_trans_${Math.random().toString(16).substr(2)}`;
 
@@ -155,7 +155,7 @@ class Pg extends Event {
       try {
         await this.query(`COMMIT`);
       } catch(err) {
-          //re-instate transaction level so it can be rolledback
+        //re-instate transaction level so it can be rolledback
         this.transactions_stack[transaction_hash] = level;
         throw err;
       }
@@ -195,29 +195,29 @@ class Pg extends Event {
     }
 
     if(this._isPooled &&  closePool)
-      return this._src.close()
+      return this._src.close();
   }
 
   static pooled(conString) {
-    if(!Pg.lnkCache)
-      Pg.lnkCache = {};
+    if(!PG.lnkCache)
+      PG.lnkCache = {};
 
     var hash = sprintf("%s@%s/%s", conString.user, conString.host, conString.database);
-    var pool = Pg.lnkCache[hash];
+    var pool = PG.lnkCache[hash];
     if(!pool) {
-      pool = new pg.Pool(conString);
-      Pg.lnkCache[hash] = pool;
-      pool.close = function(){
-       delete Pg.lnkCache[hash];
-       return pool.end();
-      }
-        /* istanbul ignore next */
+      pool = new Pg.Pool(conString);
+      PG.lnkCache[hash] = pool;
+      pool.close = function() {
+        delete PG.lnkCache[hash];
+        return pool.end();
+      };
+      /* istanbul ignore next */
       pool.on('error', (err) => {
         debug('error', err);
       });
     }
 
-    return new Pg(pool, true);
+    return new PG(pool, true);
   }
 
 
@@ -225,7 +225,7 @@ class Pg extends Event {
 
 
 
-module.exports = Pg;
+module.exports = PG;
 module.exports.SQL = SQL;
 module.exports.transformers = SQL.transformers;
 

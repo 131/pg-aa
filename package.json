@@ -1,12 +1,16 @@
 {
   "name": "pg-aa",
   "version": "2.0.2",
-  "description": "A ES6 generator (async/await) [co](https://github.com/tj/co) compliant wrapper for node-postgres.",
+  "description": "An ES7 wrapper for node-postgres.",
   "main": "index.js",
   "scripts": {
+    "jscs": "jscs --config=node_modules/ivs-jssc/ivs-node.jscsrc index.js",
+    "eslint": "eslint --config=node_modules/ivs-jssc/ivs-node.eslintrc.js index.js",
+    "checkall": "npm run eslint && npm run jscs",
     "pgserver": "cnyks pg-ctl test/db.json --ir://start=connect_or_start_server",
     "mocha": "node node_modules/mocha/bin/_mocha",
-    "test": "node node_modules/istanbul/lib/cli.js cover --report text-summary --report html --report lcov  node_modules/mocha/bin/_mocha",
+    "cover": "node node_modules/istanbul/lib/cli.js cover --report text-summary --report html --report lcov  node_modules/mocha/bin/_mocha",
+    "test": "npm run checkall && npm run cover",
     "coveralls": "npm install coveralls && node ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"
   },
   "repository": {
@@ -29,8 +33,9 @@
   "devDependencies": {
     "expect.js": "^0.3.1",
     "istanbul": "^1.1.0-alpha.1",
+    "ivs-jssc": "^2.1.2",
     "mocha": "^3.2.0",
-    "nyks": "^4.0.5",
-    "pg-ctl": "^1.5.6"
+    "nyks": "^4.1.10",
+    "pg-ctl": "^2.0.0"
   }
 }
