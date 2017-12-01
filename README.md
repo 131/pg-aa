@@ -1,34 +1,34 @@
-A ES6 wrapper (co & generator based - async/await style) for node-postgres.
+A ES7 wrapper for node-postgres.
 
 
 
 [![Build Status](https://travis-ci.org/131/pg-co.svg?branch=master)](https://travis-ci.org/131/pg-co)
 [![Coverage Status](https://coveralls.io/repos/github/131/pg-co/badge.svg?branch=master)](https://coveralls.io/github/131/pg-co?branch=master)
-[![NPM version](https://img.shields.io/npm/v/pg-co.svg)](https://www.npmjs.com/package/pg-co)
+[![NPM version](https://img.shields.io/npm/v/pg-aa.svg)](https://www.npmjs.com/package/pg-aa)
 
 
 
 # Example
 ```
-var pg  = require('pg-co');
+var pg  = require('pg-aa');
 var SQL = require('sql-template');
 
 var conString = "postgres://postgres:1234@localhost/postgres";
 
 var client = new pg(conString);
 
-co(function*(){
+(async function(){
   var line;
-  line = yield client.row(SQL`SELECT * FROM users WHERE id=${22}`);
-  // same line = yield client.row('users', {id:22});
+  line = await client.row(SQL`SELECT * FROM users WHERE id=${22}`);
+  // same line = await client.row('users', {id:22});
   if(!line)
     throw "Missing user";
 
-  yield client.insert("users_log", {
+  await client.insert("users_log", {
     user_id : 22,
     time    : Date.now(),
   });
-});
+})();
 ```
 
 # API
@@ -38,7 +38,7 @@ co(function*(){
   Select stuffs ? what did you expect ...
 
 ```
-var line = yield client.select(SQL`SELECT * FROM users WHERE parentId=${22}`);
+var line = await client.select(SQL`SELECT * FROM users WHERE parentId=${22}`);
 => [ {id:1, name : "John doe", parentId:22}, {id:2, name : "Jane doe", parentId:22}]
 ```
 
@@ -49,7 +49,7 @@ var line = yield client.select(SQL`SELECT * FROM users WHERE parentId=${22}`);
   return a single row, and a falsy value if no match (see example below)
 
 ```
-var line = yield client.row(SQL`SELECT * FROM users WHERE id=${22}`);
+var line = await client.row(SQL`SELECT * FROM users WHERE id=${22}`);
 => { id : 22, name : "John doe" }
 ```
 
@@ -59,7 +59,7 @@ var line = yield client.row(SQL`SELECT * FROM users WHERE id=${22}`);
   return an array of values from a single column
 
 ```
-var line = yield client.col('users', true, 'user_id');
+var line = await client.col('users', true, 'user_id');
 => [22, 1, 25, 55]
 ```
 
@@ -68,7 +68,7 @@ var line = yield client.col('users', true, 'user_id');
 Insert values in table...
 
 ```
-yield client.insert("users_log", {
+await client.insert("users_log", {
   user_id : 22,
   time    : Date.now(),
 });
@@ -79,7 +79,7 @@ yield client.insert("users_log", {
 Update values in a table...
 
 ```
-yield client.insert("users_log", {
+await client.insert("users_log", {
   time    : Date.now(),
 }, {
   user_id : 22,
@@ -91,7 +91,7 @@ yield client.insert("users_log", {
 Delete rows in a table...
 
 ```
-yield client.delete("users_log", "log_weight < 51");
+await client.delete("users_log", "log_weight < 51");
 ```
 
 
@@ -99,7 +99,7 @@ yield client.delete("users_log", "log_weight < 51");
 Replace values in a table... (lock select using * postgresql FOR UPDATE)
 
 ```
-yield client.replace("users_log", {
+await client.replace("users_log", {
   time    : Date.now(),
 }, {
   user_id : 22,
@@ -111,13 +111,13 @@ yield client.replace("users_log", {
 
 ## await client.query(queryString);
 ```
-yield client.query("TRUNCATE TABLE donttruncatemeplznooooo");
+await client.query("TRUNCATE TABLE donttruncatemeplznooooo");
 ```
 
 
 ## await client.truncate(tableName);
 ```
-yield client.truncate("donttruncatemeplznooooo");
+await client.truncate("donttruncatemeplznooooo");
 ```
 
 
