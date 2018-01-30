@@ -41,7 +41,13 @@ class PG extends Event {
       lnk =  new Pg.Client(this._src);
       /* istanbul ignore next */
       lnk.on('error', (err) => {  this.emit('error', err); });
-      await lnk.connect();
+      await new Promise(function(resolve, reject) {
+        lnk.connect(function(err) {
+          if(err)
+            return reject(err);
+          resolve();
+        });
+      });
     }
 
     this._lnk = lnk;
