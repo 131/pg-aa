@@ -5,6 +5,7 @@ A ES7 wrapper for node-postgres.
 [![Build Status](https://travis-ci.org/131/pg-co.svg?branch=master)](https://travis-ci.org/131/pg-co)
 [![Coverage Status](https://coveralls.io/repos/github/131/pg-co/badge.svg?branch=master)](https://coveralls.io/github/131/pg-co?branch=master)
 [![NPM version](https://img.shields.io/npm/v/pg-aa.svg)](https://www.npmjs.com/package/pg-aa)
+[![Code style](https://img.shields.io/badge/code%2fstyle-ivs-green.svg)](https://www.npmjs.com/package/eslint-plugin-ivs)
 
 
 

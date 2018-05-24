@@ -71,7 +71,7 @@ class PG extends Event {
   async value(table, cond, col) {
     var row = await this.row.apply(this, arguments);
     if(!row)
-      return ;
+      return;
 
     var value = col && col in row ? row[col] : row[ Object.keys(row)[0] ];
     return value;
@@ -177,9 +177,10 @@ class PG extends Event {
     if(level === undefined)
       throw `Incorrect transaction passed ${transaction_hash}`;
 
-    for(var tmp_hash in this.transactions_stack)
-      if(this.transactions_stack[tmp_hash] >= level)
+    for(var tmp_hash in this.transactions_stack) {
+      if(this.transactions_stack[tmp_hash] >= level) 
         delete this.transactions_stack[tmp_hash];
+    }
 
     var query = `ROLLBACK`;
 
