@@ -4,6 +4,7 @@
   "description": "An ES7 wrapper for node-postgres.",
   "main": "index.js",
   "scripts": {
+    "preversion": "npm run checkall",
     "eslint": "eslint index.js test",
     "checkall": "npm run eslint",
     "pgserver": "cnyks pg-ctl test/db.json --ir://start=connect_or_start_server",

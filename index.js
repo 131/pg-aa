@@ -178,7 +178,7 @@ class PG extends Event {
       throw `Incorrect transaction passed ${transaction_hash}`;
 
     for(var tmp_hash in this.transactions_stack) {
-      if(this.transactions_stack[tmp_hash] >= level) 
+      if(this.transactions_stack[tmp_hash] >= level)
         delete this.transactions_stack[tmp_hash];
     }
 
