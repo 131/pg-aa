@@ -36,24 +36,27 @@ describe("Testing basic functions call", function() {
     rows = await lnk.col(SQL`SELECT  generate_series(1, 6) AS foo`, null, 'foo');
     expect(rows).to.eql([1, 2, 3, 4, 5, 6]);
 
-    await lnk.query(SQL`CREATE TEMP  TABLE tmpp (foo INTEGER)`);
+    await lnk.query(SQL`CREATE TEMP  TABLE tmpp (foo INTEGER, name text)`);
 
     await lnk.insert("tmpp", {foo : 42});
     await lnk.insert("tmpp", {foo : 41});
 
+
+    await lnk.insert_bulk("tmpp", ["name", "foo"], [["John", 43], ["Jim", 44]]);
+
     rows = await lnk.col('tmpp', true, 'foo');
-    expect(rows).to.eql([42, 41]);
+    expect(rows).to.eql([42, 41, 43, 44]);
 
     await lnk.update('tmpp', {foo : 12});
 
 
 
     rows = await lnk.col('tmpp', true, 'foo');
-    expect(rows).to.eql([12, 12]);
+    expect(rows).to.eql([12, 12, 12, 12]);
 
     await lnk.replace('tmpp', {foo : 11}, {foo : 12});
     rows = await lnk.col('tmpp', true, 'foo');
-    expect(rows).to.eql([11, 11]);
+    expect(rows).to.eql([11, 11, 11, 11]);
 
     await lnk.delete('tmpp', true);
     rows = await lnk.col('tmpp', true, 'foo');
@@ -223,6 +226,7 @@ describe("Testing basic functions call", function() {
     expect(value).to.eql(value);
 
   });
+
 
 
 

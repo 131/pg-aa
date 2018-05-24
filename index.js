@@ -94,6 +94,12 @@ class PG extends Event {
   }
 
 
+  async insert_bulk(table, keys, values) {
+    var query = SQL`INSERT INTO $id${table} $keys${keys} $bulk${values}`;
+    return await this.query(query);
+  }
+
+
   async truncate(table) {
     var query = SQL`TRUNCATE TABLE $id${table}`;
     return await this.query(query);
