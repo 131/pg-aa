@@ -63,13 +63,13 @@ class PG extends Event {
   }
 
   async select(table /*, cond, cols*/) {
-    var query = typeof table != "string" ? table : SQL.select.apply(null, arguments);
+    var query = typeof table != "string" ? table : SQL.select(...arguments);
     var result = await this.query(query);
     return result.rows;
   }
 
   async value(table, cond, col) {
-    var row = await this.row.apply(this, arguments);
+    var row = await this.row(...arguments);
     if(!row)
       return;
 
@@ -78,24 +78,23 @@ class PG extends Event {
   }
 
   async row(/*table, cond, cols*/) {
-    var rows = await this.select.apply(this, arguments);
+    var rows = await this.select(...arguments);
     return rows[0];
   }
 
   async col(table, cond, col) {
-    var rows = await this.select.apply(this, arguments);
-
+    var rows = await this.select(...arguments);
     return pluck(rows, col);
   }
 
-  async insert(table, values) {
-    var query = SQL`INSERT INTO $id${table} $values${values}`;
+  async insert() {
+    var query = SQL.insert(...arguments);
     return await this.query(query);
   }
 
 
-  async insert_bulk(table, keys, values) {
-    var query = SQL`INSERT INTO $id${table} $keys${keys} $bulk${values}`;
+  async insert_bulk(/*table, keys, values*/) {
+    var query = SQL.insert_bulk(...arguments);
     return await this.query(query);
   }
 

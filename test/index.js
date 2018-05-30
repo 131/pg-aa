@@ -36,7 +36,7 @@ describe("Testing basic functions call", function() {
     rows = await lnk.col(SQL`SELECT  generate_series(1, 6) AS foo`, null, 'foo');
     expect(rows).to.eql([1, 2, 3, 4, 5, 6]);
 
-    await lnk.query(SQL`CREATE TEMP  TABLE tmpp (foo INTEGER, name text)`);
+    await lnk.query(SQL`CREATE TEMP  TABLE tmpp (name text, foo INTEGER)`);
 
     await lnk.insert("tmpp", {foo : 42});
     await lnk.insert("tmpp", {foo : 41});
