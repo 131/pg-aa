@@ -3,7 +3,6 @@
 const Pg        = require('pg');
 const SQL       = require('sql-template');
 
-const pluck     = require('mout/array/pluck');
 const values    = require('mout/object/values');
 const merge     = require('mout/object/merge');
 const sprintf   = require('util').format;
@@ -82,9 +81,9 @@ class PG extends Event {
     return rows[0];
   }
 
-  async col(table, cond, col) {
+  async col(/*table, cond, col*/) {
     var rows = await this.select(...arguments);
-    return pluck(rows, col);
+    return rows.map(row => Object.entries(row)[0][1]);
   }
 
   async insert() {
