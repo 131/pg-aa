@@ -1,13 +1,15 @@
 {
   "admin" : {
-    "host":"127.0.0.1",
+    "host":"postgres",
+    "port":"5432",
     "database" :"postgres",
     "user" : "postgres",
+    "password"  : "postgres",
     "dataDir" : "data"
   },
 
   "database" : "postgres",
-
-  "user"     : "postgres"
+  "user"      : "postgres",
+  "password"  : "postgres"
 
 }
