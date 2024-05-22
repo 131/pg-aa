@@ -1,6 +1,6 @@
 {
   "name": "pg-aa",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "An ES7 wrapper for node-postgres.",
   "main": "index.js",
   "scripts": {
