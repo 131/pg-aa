@@ -1,9 +1,30 @@
-name: tests
+name: "Tests and deploy"
 on: [push]
 jobs:
-  tests:
+  test_vlast:
     runs-on: ubuntu-latest
-    container: node:12
+    container: node:16
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+    - run: npm install
+    - run: npm run test
+  cover:
+    runs-on: ubuntu-latest
+    container: node:16
     services:
       postgres:
         image: postgres
@@ -18,9 +39,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
     - run: npm install
-    - run: npm test
+    - run: npm run cover
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: [test_vlast, cover]
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+        registry-url: 'https://registry.npmjs.org'
+    - run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
